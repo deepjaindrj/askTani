@@ -1,34 +1,129 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Phone, PhoneIncoming, Clock, TrendingUp, Users, Calendar } from 'lucide-react';
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Phone,
+  PhoneIncoming,
+  Clock,
+  TrendingUp,
+  Users,
+  Calendar,
+} from "lucide-react";
+import { useUser } from "@clerk/clerk-react";
 
 export const DashboardHome: React.FC = () => {
+  const { user, isLoaded } = useUser();
+
+  console.log("DashboardHome rendered, user:", user, "isLoaded:", isLoaded);
+
   const stats = [
-    { title: 'Total Calls Today', value: '24', change: '+12%', icon: Phone, color: 'text-primary' },
-    { title: 'Missed Calls Saved', value: '18', change: '+25%', icon: PhoneIncoming, color: 'text-accent' },
-    { title: 'Average Response Time', value: '2.3s', change: '-15%', icon: Clock, color: 'text-success' },
-    { title: 'Customer Satisfaction', value: '4.8/5', change: '+5%', icon: TrendingUp, color: 'text-warning' },
+    {
+      title: "Total Calls Today",
+      value: "24",
+      change: "+12%",
+      icon: Phone,
+      color: "text-primary",
+    },
+    {
+      title: "Missed Calls Saved",
+      value: "18",
+      change: "+25%",
+      icon: PhoneIncoming,
+      color: "text-accent",
+    },
+    {
+      title: "Average Response Time",
+      value: "2.3s",
+      change: "-15%",
+      icon: Clock,
+      color: "text-success",
+    },
+    {
+      title: "Customer Satisfaction",
+      value: "4.8/5",
+      change: "+5%",
+      icon: TrendingUp,
+      color: "text-warning",
+    },
   ];
 
   const recentCalls = [
-    { id: 1, caller: 'Sarah Johnson', time: '10 minutes ago', duration: '3:24', type: 'Appointment', status: 'Scheduled' },
-    { id: 2, caller: 'Mike Chen', time: '25 minutes ago', duration: '2:15', type: 'Inquiry', status: 'Answered' },
-    { id: 3, caller: 'Lisa Wong', time: '1 hour ago', duration: '4:12', type: 'Support', status: 'Resolved' },
-    { id: 4, caller: 'David Smith', time: '2 hours ago', duration: '1:45', type: 'Booking', status: 'Scheduled' },
+    {
+      id: 1,
+      caller: "Sarah Johnson",
+      time: "10 minutes ago",
+      duration: "3:24",
+      type: "Appointment",
+      status: "Scheduled",
+    },
+    {
+      id: 2,
+      caller: "Mike Chen",
+      time: "25 minutes ago",
+      duration: "2:15",
+      type: "Inquiry",
+      status: "Answered",
+    },
+    {
+      id: 3,
+      caller: "Lisa Wong",
+      time: "1 hour ago",
+      duration: "4:12",
+      type: "Support",
+      status: "Resolved",
+    },
+    {
+      id: 4,
+      caller: "David Smith",
+      time: "2 hours ago",
+      duration: "1:45",
+      type: "Booking",
+      status: "Scheduled",
+    },
   ];
 
   const upcomingAppointments = [
-    { id: 1, client: 'Emily Davis', time: '2:00 PM', service: 'Consultation', duration: '30 min' },
-    { id: 2, client: 'Robert Wilson', time: '3:30 PM', service: 'Follow-up', duration: '15 min' },
-    { id: 3, client: 'Maria Garcia', time: '4:15 PM', service: 'New Client', duration: '45 min' },
+    {
+      id: 1,
+      client: "Emily Davis",
+      time: "2:00 PM",
+      service: "Consultation",
+      duration: "30 min",
+    },
+    {
+      id: 2,
+      client: "Robert Wilson",
+      time: "3:30 PM",
+      service: "Follow-up",
+      duration: "15 min",
+    },
+    {
+      id: 3,
+      client: "Maria Garcia",
+      time: "4:15 PM",
+      service: "New Client",
+      duration: "45 min",
+    },
   ];
 
   return (
     <div className="p-8 space-y-8">
       <div>
-        <h1 className="text-3xl font-bold text-foreground mb-2">Welcome back, John!</h1>
-        <p className="text-muted-foreground">Here's what's happening with your AI call agent today.</p>
+        <h1 className="text-3xl font-bold text-foreground mb-2">
+          Welcome back,{" "}
+          {isLoaded && user
+            ? user.firstName || user.emailAddresses[0]?.emailAddress
+            : "User"}
+          !
+        </h1>
+        <p className="text-muted-foreground">
+          Here's what's happening with your AI call agent today.
+        </p>
+        {isLoaded && user && (
+          <p className="text-sm text-muted-foreground mt-2">
+            Logged in as: {user.emailAddresses[0]?.emailAddress}
+          </p>
+        )}
       </div>
 
       {/* Stats Cards */}
@@ -40,9 +135,15 @@ export const DashboardHome: React.FC = () => {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">{stat.title}</p>
-                    <p className="text-2xl font-bold text-foreground">{stat.value}</p>
-                    <p className={`text-sm ${stat.color} font-medium`}>{stat.change} from yesterday</p>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      {stat.title}
+                    </p>
+                    <p className="text-2xl font-bold text-foreground">
+                      {stat.value}
+                    </p>
+                    <p className={`text-sm ${stat.color} font-medium`}>
+                      {stat.change} from yesterday
+                    </p>
                   </div>
                   <IconComponent className={`h-8 w-8 ${stat.color}`} />
                 </div>
@@ -64,18 +165,29 @@ export const DashboardHome: React.FC = () => {
           <CardContent>
             <div className="space-y-4">
               {recentCalls.map((call) => (
-                <div key={call.id} className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg">
+                <div
+                  key={call.id}
+                  className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg"
+                >
                   <div>
                     <p className="font-medium text-foreground">{call.caller}</p>
-                    <p className="text-sm text-muted-foreground">{call.time} • {call.duration}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {call.time} • {call.duration}
+                    </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-medium text-foreground">{call.type}</p>
-                    <span className={`text-xs px-2 py-1 rounded-full ${
-                      call.status === 'Scheduled' ? 'bg-primary/10 text-primary' :
-                      call.status === 'Answered' ? 'bg-accent/10 text-accent' :
-                      'bg-success/10 text-success'
-                    }`}>
+                    <p className="text-sm font-medium text-foreground">
+                      {call.type}
+                    </p>
+                    <span
+                      className={`text-xs px-2 py-1 rounded-full ${
+                        call.status === "Scheduled"
+                          ? "bg-primary/10 text-primary"
+                          : call.status === "Answered"
+                          ? "bg-accent/10 text-accent"
+                          : "bg-success/10 text-success"
+                      }`}
+                    >
                       {call.status}
                     </span>
                   </div>
@@ -99,14 +211,25 @@ export const DashboardHome: React.FC = () => {
           <CardContent>
             <div className="space-y-4">
               {upcomingAppointments.map((appointment) => (
-                <div key={appointment.id} className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg">
+                <div
+                  key={appointment.id}
+                  className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg"
+                >
                   <div>
-                    <p className="font-medium text-foreground">{appointment.client}</p>
-                    <p className="text-sm text-muted-foreground">{appointment.service}</p>
+                    <p className="font-medium text-foreground">
+                      {appointment.client}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {appointment.service}
+                    </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-medium text-foreground">{appointment.time}</p>
-                    <p className="text-xs text-muted-foreground">{appointment.duration}</p>
+                    <p className="text-sm font-medium text-foreground">
+                      {appointment.time}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {appointment.duration}
+                    </p>
                   </div>
                 </div>
               ))}

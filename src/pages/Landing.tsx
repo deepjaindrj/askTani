@@ -5,39 +5,70 @@ import { Features } from "@/components/Features";
 import { Pricing } from "@/components/Pricing";
 import { Testimonials } from "@/components/Testimonials";
 import { Footer } from "@/components/Footer";
-import { OnboardingModal } from "@/components/OnboardingModal";
+import { AuthModal } from "@/components/AuthModal";
+
+interface BusinessInfo {
+  name: string;
+  address: string;
+  rating?: number;
+  phone?: string;
+  website?: string;
+  placeId: string;
+  types?: string[];
+  reviews?: any[];
+  businessDescription?: string;
+  openingHours?: {
+    periods?: Array<{
+      open: { day: number; time: string };
+      close?: { day: number; time: string };
+    }>;
+    weekday_text?: string[];
+  };
+  isOpen?: boolean;
+  priceLevel?: number;
+  photos?: any[];
+  vicinity?: string;
+  userRatingsTotal?: number;
+  utcOffsetMinutes?: number;
+}
 
 export const Landing: React.FC = () => {
-  const [isOnboardingOpen, setIsOnboardingOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [selectedBusiness, setSelectedBusiness] = useState<BusinessInfo | null>(
+    null
+  );
 
-  const handleSearchSubmit = (query: string) => {
-    console.log("Search submitted:", query);
-    setSearchQuery(query);
-    setIsOnboardingOpen(true);
+  const handleSearchSubmit = (business: BusinessInfo) => {
+    console.log("Business selected:", business);
+    setSelectedBusiness(business);
+    setIsAuthModalOpen(true);
   };
 
-  const handleOnboardingComplete = () => {
-    console.log("Onboarding completed");
-    setIsOnboardingOpen(false);
-    // Redirect to dashboard after onboarding
-    window.location.href = "/dashboard";
+  const handleShowLoginModal = () => {
+    setIsAuthModalOpen(true);
+  };
+
+  const handleAuthModalClose = () => {
+    setIsAuthModalOpen(false);
+    setSelectedBusiness(null);
   };
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <Hero onSearchSubmit={handleSearchSubmit} />
+      <Hero
+        onSearchSubmit={handleSearchSubmit}
+        onShowLoginModal={handleShowLoginModal}
+      />
       <Features />
       <Pricing />
       <Testimonials />
       <Footer />
 
-      <OnboardingModal
-        isOpen={isOnboardingOpen}
-        onClose={() => setIsOnboardingOpen(false)}
-        onComplete={handleOnboardingComplete}
-        initialSearchQuery={searchQuery}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={handleAuthModalClose}
+        selectedBusiness={selectedBusiness}
       />
     </div>
   );

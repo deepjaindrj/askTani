@@ -1,19 +1,10 @@
-import React, { useState } from 'react';
-import { Landing } from '@/pages/Landing';
-import { DashboardPage } from '@/pages/DashboardPage';
+import React from "react";
+import { Landing } from "@/pages/Landing";
 
 const Index = () => {
-  const [currentView, setCurrentView] = useState<'landing' | 'dashboard'>('landing');
+  console.log("Index page rendered");
 
-  const handleOnboardingComplete = () => {
-    setCurrentView('dashboard');
-  };
-
-  if (currentView === 'dashboard') {
-    return <DashboardPage />;
-  }
-
-  return <Landing onComplete={handleOnboardingComplete} />;
+  return <Landing />;
 };
 
 export default Index;

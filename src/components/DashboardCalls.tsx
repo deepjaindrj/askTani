@@ -18,238 +18,281 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Phone, Search, Filter, Download, Play, Clock } from 'lucide-react';
+import { 
+  Phone, 
+  Search, 
+  Filter, 
+  Download, 
+  Play, 
+  Clock, 
+  Users,
+  PhoneCall,
+  RefreshCw,
+  Trash2,
+  X,
+  User,
+  Hash,
+  MessageSquare
+} from 'lucide-react';
 
 export const DashboardCalls: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState('all');
+  const [filterTime, setFilterTime] = useState('all-time');
+  const [filterNotes, setFilterNotes] = useState('all-notes');
+  const [filterPriority, setFilterPriority] = useState('all-priority');
+  const [smartSearchActive, setSmartSearchActive] = useState(true);
+  const [showPerPage, setShowPerPage] = useState('10');
 
-  const calls = [
-    {
-      id: '1',
-      caller: 'Sarah Johnson',
-      phone: '+1 (416) 555-0123',
-      time: '2024-01-15 10:30 AM',
-      duration: '3:24',
-      type: 'Inbound',
-      status: 'Completed',
-      outcome: 'Appointment Scheduled',
-      agent: 'Benny (Sarah Voice)',
-    },
-    {
-      id: '2',
-      caller: 'Mike Chen',
-      phone: '+1 (647) 555-0456',
-      time: '2024-01-15 10:05 AM',
-      duration: '2:15',
-      type: 'Inbound',
-      status: 'Completed',
-      outcome: 'Information Provided',
-      agent: 'Benny (Sarah Voice)',
-    },
-    {
-      id: '3',
-      caller: 'Lisa Wong',
-      phone: '+1 (905) 555-0789',
-      time: '2024-01-15 09:45 AM',
-      duration: '4:12',
-      type: 'Inbound',
-      status: 'Completed',
-      outcome: 'Issue Resolved',
-      agent: 'Benny (Alex Voice)',
-    },
-    {
-      id: '4',
-      caller: 'David Smith',
-      phone: '+1 (416) 555-0321',
-      time: '2024-01-15 09:20 AM',
-      duration: '1:45',
-      type: 'Inbound',
-      status: 'Completed',
-      outcome: 'Callback Requested',
-      agent: 'Benny (Sarah Voice)',
-    },
-    {
-      id: '5',
-      caller: 'Emily Davis',
-      phone: '+1 (647) 555-0654',
-      time: '2024-01-15 08:55 AM',
-      duration: '5:33',
-      type: 'Inbound',
-      status: 'Completed',
-      outcome: 'Appointment Scheduled',
-      agent: 'Benny (Sarah Voice)',
-    },
-  ];
-
-  const getStatusBadge = (status: string) => {
-    const statusStyles = {
-      'Completed': 'bg-success/10 text-success',
-      'In Progress': 'bg-warning/10 text-warning',
-      'Failed': 'bg-destructive/10 text-destructive',
-    };
-    return statusStyles[status as keyof typeof statusStyles] || 'bg-muted text-muted-foreground';
-  };
-
-  const getOutcomeBadge = (outcome: string) => {
-    const outcomeStyles = {
-      'Appointment Scheduled': 'bg-primary/10 text-primary',
-      'Information Provided': 'bg-accent/10 text-accent',
-      'Issue Resolved': 'bg-success/10 text-success',
-      'Callback Requested': 'bg-warning/10 text-warning',
-    };
-    return outcomeStyles[outcome as keyof typeof outcomeStyles] || 'bg-muted text-muted-foreground';
-  };
-
-  const filteredCalls = calls.filter(call => {
-    const matchesSearch = call.caller.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         call.phone.includes(searchTerm) ||
-                         call.outcome.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = filterStatus === 'all' || call.status.toLowerCase() === filterStatus;
-    return matchesSearch && matchesFilter;
-  });
+  // Empty state - no calls yet
+  const calls: any[] = [];
 
   return (
     <div className="p-8 space-y-6">
+      {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Call History</h1>
-          <p className="text-muted-foreground">Manage and review all your AI agent calls</p>
+          <p className="text-muted-foreground">View and manage your recent calls</p>
         </div>
-        <Button variant="outline" className="gap-2">
-          <Download className="h-4 w-4" />
-          Export Calls
+        
+        {/* Header Actions */}
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <span>Mark all 0 calls as unread</span>
+          <div className="flex items-center gap-2 ml-4">
+            <Button variant="ghost" size="sm" className="gap-1">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              Mark All Read
+            </Button>
+            <Button variant="ghost" size="sm" className="gap-1">
+              <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+              Mark All Unread
+            </Button>
+            <Button variant="ghost" size="sm" className="gap-1">
+              <RefreshCw className="h-3 w-3" />
+              Refresh
+            </Button>
+            <Button variant="ghost" size="sm" className="gap-1 text-red-500">
+              <Trash2 className="h-3 w-3" />
+              Delete All
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground mb-1">Total Calls</p>
+                <div className="flex items-baseline gap-2">
+                  <p className="text-3xl font-bold">0</p>
+                  <p className="text-sm text-muted-foreground">in your organization</p>
+                </div>
+              </div>
+              <div className="p-3 bg-red-50 rounded-full">
+                <PhoneCall className="h-6 w-6 text-red-500" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground mb-1">Avg. Duration</p>
+                <div className="flex items-baseline gap-2">
+                  <p className="text-3xl font-bold">0m 0s</p>
+                  <p className="text-sm text-muted-foreground">average call time</p>
+                </div>
+              </div>
+              <div className="p-3 bg-orange-50 rounded-full">
+                <Clock className="h-6 w-6 text-orange-500" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground mb-1">Unique Callers</p>
+                <div className="flex items-baseline gap-2">
+                  <p className="text-3xl font-bold">0</p>
+                  <p className="text-sm text-muted-foreground">unique phone numbers</p>
+                </div>
+              </div>
+              <div className="p-3 bg-purple-50 rounded-full">
+                <Users className="h-6 w-6 text-purple-500" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Filter Tabs */}
+      <div className="flex items-center gap-2">
+        <Button variant="default" className="rounded-full">
+          All Calls
+        </Button>
+        <Button variant="outline" className="rounded-full">
+          Incoming
+        </Button>
+        <Button variant="outline" className="rounded-full">
+          Outgoing
         </Button>
       </div>
 
       {/* Filters */}
-      <Card>
-        <CardContent className="p-6">
-          <div className="flex flex-col lg:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search calls by name, phone, or outcome..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <Select value={filterStatus} onValueChange={setFilterStatus}>
-              <SelectTrigger className="w-full lg:w-48">
-                <Filter className="h-4 w-4 mr-2" />
-                <SelectValue placeholder="Filter by status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Calls</SelectItem>
-                <SelectItem value="completed">Completed</SelectItem>
-                <SelectItem value="in progress">In Progress</SelectItem>
-                <SelectItem value="failed">Failed</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
+        {/* Search */}
+        <div className="flex-1 relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search names, numbers, or call conversations..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10 pr-8"
+          />
+          {searchTerm && (
+            <button 
+              onClick={() => setSearchTerm('')}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2"
+            >
+              <X className="h-4 w-4 text-muted-foreground" />
+            </button>
+          )}
+        </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2">
-              <Phone className="h-5 w-5 text-primary" />
-              <div>
-                <p className="text-sm text-muted-foreground">Total Calls</p>
-                <p className="text-2xl font-bold">{calls.length}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2">
-              <Clock className="h-5 w-5 text-accent" />
-              <div>
-                <p className="text-sm text-muted-foreground">Avg Duration</p>
-                <p className="text-2xl font-bold">3:14</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2">
-              <div className="h-5 w-5 bg-success rounded-full" />
-              <div>
-                <p className="text-sm text-muted-foreground">Success Rate</p>
-                <p className="text-2xl font-bold">98%</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2">
-              <div className="h-5 w-5 bg-primary rounded-full" />
-              <div>
-                <p className="text-sm text-muted-foreground">Appointments</p>
-                <p className="text-2xl font-bold">12</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Filter Dropdowns */}
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-muted-foreground">Filters:</span>
+          
+          <Select value={filterTime} onValueChange={setFilterTime}>
+            <SelectTrigger className="w-32">
+              <SelectValue placeholder="All Time" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all-time">All Time</SelectItem>
+              <SelectItem value="today">Today</SelectItem>
+              <SelectItem value="week">This Week</SelectItem>
+              <SelectItem value="month">This Month</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select value={filterNotes} onValueChange={setFilterNotes}>
+            <SelectTrigger className="w-32">
+              <SelectValue placeholder="All Notes" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all-notes">All Notes</SelectItem>
+              <SelectItem value="with-notes">With Notes</SelectItem>
+              <SelectItem value="without-notes">Without Notes</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select value={filterPriority} onValueChange={setFilterPriority}>
+            <SelectTrigger className="w-32">
+              <SelectValue placeholder="All Priority" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all-priority">All Priority</SelectItem>
+              <SelectItem value="high">High Priority</SelectItem>
+              <SelectItem value="normal">Normal</SelectItem>
+              <SelectItem value="low">Low Priority</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
+
+      {/* Smart Search */}
+      {smartSearchActive && (
+        <Card className="bg-blue-50 border-blue-200">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <Search className="h-4 w-4 text-blue-600" />
+                </div>
+                <div>
+                  <p className="font-medium text-blue-900">Smart Search Active - Enhanced</p>
+                  <div className="flex items-center gap-6 mt-2">
+                    <div className="flex items-center gap-1">
+                      <User className="h-4 w-4 text-blue-600" />
+                      <span className="text-sm text-blue-700">Caller names</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Hash className="h-4 w-4 text-blue-600" />
+                      <span className="text-sm text-blue-700">Phone numbers</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <MessageSquare className="h-4 w-4 text-blue-600" />
+                      <span className="text-sm text-blue-700">Call transcripts</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => setSmartSearchActive(false)}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Calls Table */}
       <Card>
-        <CardHeader>
-          <CardTitle>Recent Calls ({filteredCalls.length})</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Caller</TableHead>
-                  <TableHead>Phone</TableHead>
-                  <TableHead>Time</TableHead>
-                  <TableHead>Duration</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Outcome</TableHead>
-                  <TableHead>Agent</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredCalls.map((call) => (
-                  <TableRow key={call.id}>
-                    <TableCell className="font-medium">{call.caller}</TableCell>
-                    <TableCell className="text-muted-foreground">{call.phone}</TableCell>
-                    <TableCell className="text-muted-foreground">{call.time}</TableCell>
-                    <TableCell>{call.duration}</TableCell>
-                    <TableCell>
-                      <Badge className={getStatusBadge(call.status)}>
-                        {call.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className={getOutcomeBadge(call.outcome)}>
-                        {call.outcome}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">{call.agent}</TableCell>
-                    <TableCell>
-                      <Button variant="ghost" size="sm" className="gap-1">
-                        <Play className="h-3 w-3" />
-                        Play
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+        <CardContent className="p-0">
+          {/* Table Header */}
+          <div className="border-b">
+            <div className="grid grid-cols-8 gap-4 p-4 text-sm font-medium text-muted-foreground">
+              <div>Caller</div>
+              <div>Number</div>
+              <div>Date & Time ↑</div>
+              <div>Duration</div>
+              <div>Type</div>
+              <div>Status</div>
+              <div>Notes</div>
+              <div>Actions</div>
+            </div>
+          </div>
+
+          {/* Empty State */}
+          <div className="flex flex-col items-center justify-center py-16">
+            <div className="p-4 bg-muted rounded-full mb-4">
+              <Phone className="h-8 w-8 text-muted-foreground" />
+            </div>
+            <h3 className="text-xl font-semibold text-foreground mb-2">No call logs found</h3>
+            <p className="text-muted-foreground">No calls have been made or received yet.</p>
           </div>
         </CardContent>
       </Card>
+
+      {/* Pagination */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <span>Show</span>
+          <Select value={showPerPage} onValueChange={setShowPerPage}>
+            <SelectTrigger className="w-16 h-8">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="10">10</SelectItem>
+              <SelectItem value="25">25</SelectItem>
+              <SelectItem value="50">50</SelectItem>
+              <SelectItem value="100">100</SelectItem>
+            </SelectContent>
+          </Select>
+          <span>calls per page</span>
+        </div>
+      </div>
     </div>
   );
 };

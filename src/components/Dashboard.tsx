@@ -25,6 +25,12 @@ import {
 } from "lucide-react";
 import { DashboardHome } from "@/components/DashboardHome";
 import { DashboardCalls } from "@/components/DashboardCalls";
+import { DashboardOutbound } from "@/components/DashboardOutboundCalls";
+import { DashboardMessages } from "@/components/DashboardMessage";
+import { DashboardCallPlanning } from "@/components/DashboardCallPlanning";
+import { DashboardAnalytics } from "./DashboardAnalytics";
+import { DashboardKnowledgeBase } from "./DashboardKnowledgeBase";
+import { DashboardVoices } from "./DashboardVoice";
 import { UserButton } from "@clerk/clerk-react";
 
 const sidebarItems = [
@@ -92,6 +98,18 @@ export const Dashboard: React.FC = () => {
         return <DashboardHome />;
       case "calls":
         return <DashboardCalls />;
+      case "outbound":
+        return <DashboardOutbound />;
+      case "messages":
+        return <DashboardMessages />;  
+      case "planning":
+        return <DashboardCallPlanning />;
+      case "analytics":
+        return <DashboardAnalytics />;
+      case "knowledge":
+        return <DashboardKnowledgeBase />;
+      case "voices":
+        return <DashboardVoices />;
       default:
         return (
           <div className="p-8">
